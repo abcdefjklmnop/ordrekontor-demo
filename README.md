@@ -43,10 +43,6 @@ npm run build   # bygger demo/Ordrekontor_demo.html
 
 All data er fiktiv og ligger i minnet – ingenting lagres mellom øktene. Det er ingen backend, ingen autentisering og ingen reell integrasjon mot økonomisystem. Eksporten er en demonstrasjon av flyten, ikke en produksjonsklar integrasjon.
 
-## Bakgrunn
-
-Prosjektet inngår i Karos Mokrians portefølje og er utviklet med KI-assistanse. Beskrivelsene over gjelder det koden faktisk demonstrerer.
-
 ## Lisens
 
 MIT – se [LICENSE](LICENSE).
