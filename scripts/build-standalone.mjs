@@ -1,0 +1,15 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {createHash} from 'node:crypto';
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+const output=path.resolve(process.argv[2]??path.join(root,'..','ordrekontor-pilotpakke','Ordrekontor_demo.html'));
+const read=f=>fs.readFileSync(path.join(root,'dist',f),'utf8');
+const moduleText=f=>read(f).replace(/^import .*?;\r?\n/gm,'').replace(/^export /gm,'');
+const script='\n'+moduleText('core.js')+'\nconst baseCatalog = catalog;\n'+moduleText('model.js')+'\n'+moduleText('app.js')+'\n';
+const style='\n'+read('style.css')+'\n';
+const hash=text=>createHash('sha256').update(text).digest('base64');
+let html=read('index.html').replace('<link rel="stylesheet" href="style.css">','<style>'+style+'</style>').replace('<script type="module" src="app.js"></script>','<script type="module">'+script+'</script>');
+html=html.replace(/(<meta http-equiv="Content-Security-Policy" content=")[^"]*(">)/,(_,a,b)=>a+"default-src 'none'; script-src 'sha256-"+hash(script)+"'; style-src 'unsafe-inline'; connect-src 'none'; img-src data:; object-src 'none'; base-uri 'none'; form-action 'none'"+b);
+fs.mkdirSync(path.dirname(output),{recursive:true});fs.writeFileSync(output,html);fs.writeFileSync(output+'.syntax.mjs',script);
+console.log(JSON.stringify({output,bytes:Buffer.byteLength(html),scriptHash:hash(script)}));
